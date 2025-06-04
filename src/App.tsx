@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Send, Plus, History, Trash2, MessageSquare } from "lucide-react";
 import type { Message, SignTypedDataFunction } from "./utils/types";
 import { createWalletClient, custom, http } from "viem";
+import "viem/window";
 import { baseSepolia } from "viem/chains";
 import { useAccount } from "wagmi";
 import { wrapBrowserFetchWithPayment } from "./utils/x402Proxy";
@@ -56,9 +57,7 @@ const deleteChat = async (chatId: string) => {
 };
 
 const RetroMacOSChat = () => {
-  const [currentChatId, setCurrentChatId] = useState(() =>
-    Date.now().toString()
-  );
+  const [currentChatId, setCurrentChatId] = useState(() => Date.now().toString());
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [messages, setMessages] = useState([
     {
@@ -99,10 +98,7 @@ const RetroMacOSChat = () => {
   const generateChatTitle = (msgs: Message[]) => {
     const userMessage = msgs.find((m) => m.role === "user");
     if (userMessage) {
-      return (
-        userMessage.content.slice(0, 30) +
-        (userMessage.content.length > 30 ? "..." : "")
-      );
+      return userMessage.content.slice(0, 30) + (userMessage.content.length > 30 ? "..." : "");
     }
     return "New Chat";
   };
@@ -138,6 +134,9 @@ const RetroMacOSChat = () => {
   };
 
   const handleSubmit = async (e: any) => {
+    if (!window.ethereum || !account.address) {
+      return;
+    }
     e.preventDefault();
     if (!input.trim() || isStreaming) return;
 
@@ -151,41 +150,36 @@ const RetroMacOSChat = () => {
     const walletClient = createWalletClient({
       account: account.address,
       chain: baseSepolia,
-      transport: http(
-        "https://base-sepolia.g.alchemy.com/v2/hNh344Z1xgLJaVEu84EBXbvX9ow36Q2e"
-      ),
+      transport: custom(window.ethereum),
     });
 
     // Create signTypedData function for x402
     const signTypedData: SignTypedDataFunction = async (typedData) => {
       return await walletClient.signTypedData({
-        account: account.address!,
+        account: account.address,
         ...typedData,
       });
     };
 
     // Create x402 fetch function
     const fetchWithPayment = wrapBrowserFetchWithPayment(
-      account.address!,
+      account.address,
       signTypedData,
-      BigInt(100000) // Max 0.1 USDC
+      BigInt(100000), // Max 0.1 USDC
     );
 
     try {
-      const response = await fetchWithPayment(
-        "http://localhost:3000/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "llama3.2",
-            messages: newMessages,
-            stream: true,
-          }),
-        }
-      );
+      const response = await fetchWithPayment("http://localhost:3000/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama3.2",
+          messages: newMessages,
+          stream: true,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -278,9 +272,7 @@ const RetroMacOSChat = () => {
             <div className="bg-gradient-to-b from-gray-300 to-gray-400 border-b border-gray-500 px-4 py-2 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <History size={16} className="text-gray-800" />
-                <span className="text-sm font-bold text-gray-800">
-                  Chat History
-                </span>
+                <span className="text-sm font-bold text-gray-800">Chat History</span>
               </div>
               <button
                 onClick={() => setShowHistory(false)}
@@ -302,15 +294,9 @@ const RetroMacOSChat = () => {
                     }`}
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-gray-900 truncate">
-                        {chat.title}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {formatDate(chat.timestamp)}
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        {chat.messages.length} messages
-                      </div>
+                      <div className="text-sm font-medium text-gray-900 truncate">{chat.title}</div>
+                      <div className="text-xs text-gray-500">{formatDate(chat.timestamp)}</div>
+                      <div className="text-xs text-gray-400">{chat.messages.length} messages</div>
                     </div>
                     <button
                       onClick={(e) => deleteChatHistory(chat.id, e)}
@@ -321,9 +307,7 @@ const RetroMacOSChat = () => {
                   </div>
                 ))}
                 {chatHistory.length === 0 && (
-                  <div className="text-center text-gray-500 text-sm py-8">
-                    No chat history yet
-                  </div>
+                  <div className="text-center text-gray-500 text-sm py-8">No chat history yet</div>
                 )}
               </div>
             </div>
@@ -341,9 +325,7 @@ const RetroMacOSChat = () => {
                 <button className="w-3 h-3 bg-green-500 rounded-full border border-green-600 hover:bg-green-400"></button>
               </div>
             </div>
-            <div className="text-sm font-bold text-gray-800 tracking-wide">
-              AI Assistant
-            </div>
+            <div className="text-sm font-bold text-gray-800 tracking-wide">AI Assistant</div>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowHistory(!showHistory)}
@@ -370,9 +352,7 @@ const RetroMacOSChat = () => {
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`flex ${
-                      message.role === "user" ? "justify-end" : "justify-start"
-                    }`}
+                    className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
                       className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg border-2 ${
@@ -451,7 +431,7 @@ const RetroMacOSChat = () => {
             <div className="p-6">
               <h3>Connect your wallet</h3>
               <WalletOptions />
-            </div>              
+            </div>
           )}
 
           {/* Status Bar */}
