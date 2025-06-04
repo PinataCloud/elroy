@@ -169,7 +169,7 @@ const RetroMacOSChat = () => {
     );
 
     try {
-      const response = await fetchWithPayment("http://localhost:3000/v1/chat/completions", {
+      const response = await fetchWithPayment("https://402.jetson.computer/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
