@@ -6,7 +6,7 @@ import { http, createConfig } from 'wagmi'
 import { baseSepolia } from 'wagmi/chains'
 import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { injected, metaMask, safe, walletConnect } from 'wagmi/connectors'
+import { injected, metaMask, safe } from 'wagmi/connectors'
 
 export const config = createConfig({
   chains: [baseSepolia],
