@@ -14,7 +14,6 @@
     "splashImageUrl": "https://www.elroy.computer/splash.png",
     "splashBackgroundColor": "#DADDE3",
     "subtitle": "Chat with an AI through x402",
-    "description": "Elroy is an x402 AI experiment, where every request paid in USDC through x402 to hardware running a local AI Model",
-    "primaryCategory": "entertainment"
+    "description": "Elroy is an x402 AI experiment, where every request paid in USDC through x402 to hardware running a local AI Model"
   }
 }
