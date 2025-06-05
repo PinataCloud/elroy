@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Plus, History, Trash2, MessageSquare } from "lucide-react";
 import type { Message, SignTypedDataFunction } from "./utils/types";
-import { createWalletClient, custom, http } from "viem";
+import { createWalletClient, custom } from "viem";
 import "viem/window";
 import { baseSepolia } from "viem/chains";
 import { useAccount } from "wagmi";
@@ -58,7 +58,7 @@ const deleteChat = async (chatId: string) => {
 
 const RetroMacOSChat = () => {
   const [currentChatId, setCurrentChatId] = useState(() => Date.now().toString());
-  const [chatHistory, setChatHistory] = useState<Message[]>([]);
+  const [chatHistory, setChatHistory] = useState<any[]>([]);
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -214,6 +214,7 @@ const RetroMacOSChat = () => {
               }
             } catch (parseError: any) {
               console.log("Skipping unparseable chunk:", line);
+              console.log(parseError);
             }
           }
         }
@@ -228,7 +229,7 @@ const RetroMacOSChat = () => {
 
         // Auto-save after each response
         setTimeout(async () => {
-          const chat = {
+          const chat: any = {
             id: currentChatId,
             messages: finalMessages,
             timestamp: Date.now(),
