@@ -5,7 +5,7 @@ import "viem/window";
 import { useAccount, useSignTypedData, useSwitchChain, useDisconnect } from "wagmi";
 import { wrapBrowserFetchWithPayment } from "./utils/x402Proxy";
 import WalletOptions from "./WalletOptions";
-import { baseSepolia } from "viem/chains";
+import { base } from "viem/chains";
 import { sdk } from "@farcaster/frame-sdk";
 
 const DB_NAME = "ChatHistory";
@@ -164,7 +164,7 @@ const RetroMacOSChat = () => {
     setStreamingMessage("");
 
     switchChain({
-      chainId: baseSepolia.id,
+      chainId: base.id,
     });
     // Create signTypedData function for x402
     const signTypedDataWrapper: SignTypedDataFunction = async (typedData) => {
