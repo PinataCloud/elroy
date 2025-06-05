@@ -436,7 +436,7 @@ const RetroMacOSChat = () => {
                     ) : (
                       <div className="flex items-center space-x-2">
                         <Send size={14} />
-                        <span>Send</span>
+                        <p className="text-xs">$0.001</p>
                       </div>
                     )}
                   </button>
@@ -475,7 +475,6 @@ const RetroMacOSChat = () => {
               )}
             </div>
             <div className="flex items-center space-x-4">
-              <span>{chatHistory.length} saved chats</span>
               <span>{messages.length} messages</span>
             </div>
           </div>
