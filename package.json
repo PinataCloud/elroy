@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@farcaster/frame-sdk": "^0.0.57",
+    "@farcaster/frame-wagmi-connector": "^0.0.46",
     "@noble/hashes": "^1.8.0",
     "@tailwindcss/vite": "^4.1.8",
-    "@tanstack/react-query": "^5.79.0",
+    "@tanstack/react-query": "^5.80.6",
     "install": "^0.13.0",
     "lucide-react": "^0.513.0",
     "npm": "^11.4.1",
@@ -20,8 +22,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tailwindcss": "^4.1.8",
-    "viem": "^2.30.5",
-    "wagmi": "^2.15.4",
+    "viem": "2.x",
+    "wagmi": "^2.15.5",
     "x402-axios": "^0.3.3",
     "x402-fetch": "^0.3.3"
   },

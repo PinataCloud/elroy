@@ -1,0 +1,20 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjYwMjMsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHg0NTYxMzExNjFmODNDN0Q3ZkRBMTViMzJhNWY3QzIxRkQ0RTI3RTk2In0",
+    "payload": "eyJkb21haW4iOiJlbHJveS5jb21wdXRlciJ9",
+    "signature": "MHg1MThjZTQxMzUwN2JiYzk4ZTRhZjZmYzI5ZmRhOTI5MjAyZmI1MjU5NmYwNWI2YjcyNWYyNmJkZDRiOTM4ZDExMmVjYTJlNGZmZjg1N2JkMjUyMmRiOTk0MGRhNjgwMjJjMGFkNGJjYmZlN2YwMzIxM2E4YTgzMGNhOGE0YmQzNTFi"
+  },
+  "frame": {
+    "version": "1",
+    "name": "Elroy",
+    "iconUrl": "https://www.elroy.computer/icon.png",
+    "homeUrl": "https://www.elroy.computer",
+    "imageUrl": "https://www.elroy.computer/image.png",
+    "buttonTitle": "Chat with Elroy",
+    "splashImageUrl": "https://www.elroy.computer/splash.png",
+    "splashBackgroundColor": "#DADDE3",
+    "subtitle": "Chat with an AI through x402",
+    "description": "Elroy is an x402 AI experiment, where every request paid in USDC through x402 to hardware running a local AI Model",
+    "primaryCategory": "entertainment"
+  }
+}

@@ -2,9 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { Send, Plus, History, Trash2, MessageSquare } from "lucide-react";
 import type { Message, SignTypedDataFunction } from "./utils/types";
 import "viem/window";
-import { useAccount, useSignTypedData } from "wagmi";
+import { useAccount, useSignTypedData, useSwitchChain, useDisconnect } from "wagmi";
 import { wrapBrowserFetchWithPayment } from "./utils/x402Proxy";
 import WalletOptions from "./WalletOptions";
+import { baseSepolia } from "viem/chains";
+import { sdk } from "@farcaster/frame-sdk";
 
 const DB_NAME = "ChatHistory";
 const DB_VERSION = 1;
@@ -67,11 +69,14 @@ const RetroMacOSChat = () => {
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState("");
   const [showHistory, setShowHistory] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const messagesEndRef: any = useRef(null);
   const inputRef: any = useRef(null);
 
   const account = useAccount();
-  const { signTypedData } = useSignTypedData();
+  const { signTypedDataAsync } = useSignTypedData();
+  const { switchChain } = useSwitchChain();
+  const { disconnect } = useDisconnect();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -83,6 +88,18 @@ const RetroMacOSChat = () => {
 
   useEffect(() => {
     loadChatHistory();
+    const initializeSdk = async () => {
+      try {
+        sdk.actions.ready();
+      } catch (e) {
+        console.log("Not in a Miniapp context: ", e);
+        setIsLoading(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeSdk();
   }, []);
 
   const loadChatHistory = async () => {
@@ -133,7 +150,7 @@ const RetroMacOSChat = () => {
   };
 
   const handleSubmit = async (e: any) => {
-    if (!window.ethereum || !account.address) {
+    if (!account.address) {
       return;
     }
     e.preventDefault();
@@ -146,9 +163,12 @@ const RetroMacOSChat = () => {
     setIsStreaming(true);
     setStreamingMessage("");
 
+    switchChain({
+      chainId: baseSepolia.id,
+    });
     // Create signTypedData function for x402
-    const signTypedData: SignTypedDataFunction = async (typedData) => {
-      return await signTypedData({
+    const signTypedDataWrapper: SignTypedDataFunction = async (typedData) => {
+      return signTypedDataAsync({
         ...typedData,
       });
     };
@@ -156,7 +176,7 @@ const RetroMacOSChat = () => {
     // Create x402 fetch function
     const fetchWithPayment = wrapBrowserFetchWithPayment(
       account.address,
-      signTypedData,
+      signTypedDataWrapper,
       BigInt(100000), // Max 0.1 USDC
     );
 
@@ -254,6 +274,9 @@ const RetroMacOSChat = () => {
       minute: "2-digit",
     });
   };
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-200 to-gray-300 p-4 font-mono">
@@ -430,11 +453,20 @@ const RetroMacOSChat = () => {
           {/* Status Bar */}
           <div className="bg-gradient-to-b from-gray-300 to-gray-400 border-t border-gray-500 px-4 py-1 flex items-center justify-between text-xs text-gray-800">
             <div className="flex items-center space-x-4">
-              <span>Connected</span>
-              <div className="flex items-center space-x-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Ready</span>
-              </div>
+              <button type="button" onClick={() => disconnect()}>
+                {account.isConnected ? "Connected" : "Disconnected"}
+              </button>
+              {account.isConnected ? (
+                <div className="flex items-center space-x-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Ready</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-1">
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <span>Not Ready</span>
+                </div>
+              )}
               {currentChatId && (
                 <div className="flex items-center space-x-1">
                   <MessageSquare size={12} />
