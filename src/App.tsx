@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Plus, History, Trash2, MessageSquare } from "lucide-react";
 import type { Message, SignTypedDataFunction } from "./utils/types";
-import { createWalletClient, custom, http } from "viem";
 import "viem/window";
-import { baseSepolia } from "viem/chains";
-import { useAccount } from "wagmi";
+import { useAccount, useSignTypedData } from "wagmi";
 import { wrapBrowserFetchWithPayment } from "./utils/x402Proxy";
 import WalletOptions from "./WalletOptions";
 
@@ -73,6 +71,7 @@ const RetroMacOSChat = () => {
   const inputRef: any = useRef(null);
 
   const account = useAccount();
+  const { signTypedData } = useSignTypedData();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -147,16 +146,9 @@ const RetroMacOSChat = () => {
     setIsStreaming(true);
     setStreamingMessage("");
 
-    const walletClient = createWalletClient({
-      account: account.address,
-      chain: baseSepolia,
-      transport: custom(window.ethereum),
-    });
-
     // Create signTypedData function for x402
     const signTypedData: SignTypedDataFunction = async (typedData) => {
-      return await walletClient.signTypedData({
-        account: account.address,
+      return await signTypedData({
         ...typedData,
       });
     };
