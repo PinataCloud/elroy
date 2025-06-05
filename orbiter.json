@@ -1,0 +1,6 @@
+{
+  "siteId": "47a56a8d-0b1e-450a-8f2a-6b930bb60dd8",
+  "domain": "elroy",
+  "buildCommand": "npm run build",
+  "buildDir": "dist"
+}

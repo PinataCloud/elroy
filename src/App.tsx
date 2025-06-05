@@ -56,7 +56,7 @@ const deleteChat = async (chatId: string) => {
 
 const RetroMacOSChat = () => {
   const [currentChatId, setCurrentChatId] = useState(() => Date.now().toString());
-  const [chatHistory, setChatHistory] = useState<Message[]>([]);
+  const [chatHistory, setChatHistory] = useState<any[]>([]);
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -206,6 +206,7 @@ const RetroMacOSChat = () => {
               }
             } catch (parseError: any) {
               console.log("Skipping unparseable chunk:", line);
+              console.log(parseError);
             }
           }
         }
@@ -220,7 +221,7 @@ const RetroMacOSChat = () => {
 
         // Auto-save after each response
         setTimeout(async () => {
-          const chat = {
+          const chat: any = {
             id: currentChatId,
             messages: finalMessages,
             timestamp: Date.now(),
